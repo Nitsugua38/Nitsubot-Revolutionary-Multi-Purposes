@@ -1,17 +1,23 @@
 # RevolutionaryDiscordBot
 A Revolutionary Discord Bot with redesigned features
 
-Commands :
+##Commands :
+
+
 `/msg` - The bot sends a message to a user in the guild. You can define if he sends either your name or only the name of the guild or… nothing ! Like an anonymous message !
+
 
 
 `/tempchannel` - The bot creates a voice channel for you which can be deleted in one click (even if you are just a member without any permissions !). Note : the moderators have to define the category where to create the voice channel using `/config tempchannel`.
 
 
+
 `/play` - A revolutionary way to listen to music in a voice channel with one command and buttons which allow you to add to music queue, pause, skip, see lyrics, see queue and stop when you’re done!
 
 
+
 `/kick` and `/ban` - Basics. Allow you to send a message to the user at the same time!
+
 
 
 
@@ -19,7 +25,9 @@ Loads of other features will be available soon as this project is in development
 
 
 
+
 Bot is currently in French but will be available in English soon !
+
 
 
 
