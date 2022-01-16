@@ -1,7 +1,7 @@
 # RevolutionaryDiscordBot
 A Revolutionary Discord Bot with redesigned features
 
-##Commands :
+## Commands :
 
 
 `/msg` - The bot sends a message to a user in the guild. You can define if he sends either your name or only the name of the guild or… nothing ! Like an anonymous message !
