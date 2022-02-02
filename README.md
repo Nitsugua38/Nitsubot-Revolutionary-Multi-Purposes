@@ -16,6 +16,14 @@ A Revolutionary Discord Bot with redesigned features
 
 
 
+`/ticket` - Send a ticket panel with customizable options such as title, description, and staff role to access created tickets !
+
+
+
+`/channel <lock/unlock/private/public>` - Quick way to mute everyone or a specific role in a channel or set a channel to private so one will need a spcific role to be able to accesss it !
+
+
+
 `/kick` and `/ban` - Basics. Allow you to send a message to the user at the same time!
 
 
