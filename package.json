@@ -1,5 +1,5 @@
 {
-  "name": "messenger",
+  "name": "nitsubot-rmp",
   "version": "1.0.0",
   "description": "A Revolutionary Discord Bot with redesigned features",
   "main": "index.js",
@@ -20,6 +20,7 @@
     "ffmpeg": "^0.0.4",
     "ffmpeg-static": "^4.4.0",
     "fluent-ffmpeg": "^2.1.2",
+    "moment": "^2.29.1",
     "sequelize": "^6.12.0",
     "sqlite3": "^5.0.2"
   }
