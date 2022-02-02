@@ -41,3 +41,7 @@ Bot is currently in French but will be available in English soon !
 
 Feel free to invite the bot:
 https://discord.com/oauth2/authorize?client_id=919251061066317896&permissions=8&scope=bot%20applications.commands
+
+
+
+Status page : https://nitsubot-rmp.statuspage.io
