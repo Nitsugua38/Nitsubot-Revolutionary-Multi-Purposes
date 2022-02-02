@@ -5,7 +5,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("ban")
         .setDescription("Banni quelqu’un en lui envoyant un message")
-        .addUserOption(option => option.setName('cible').setDescription("L’utilisateur à bannir")),
+        .addUserOption(option => option.setName('cible').setDescription("L’utilisateur à bannir").setRequired(true)),
     async execute(interaction) {
         if (interaction.memberPermissions.has(Permissions.FLAGS.BAN_MEMBERS)) {
             var noerroroccured = true;

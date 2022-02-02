@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const player = require("../index.js");
+const { player } = require("../index.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,7 +12,7 @@ module.exports = {
         if (interaction.guild.me.voice.channelId && interaction.member.voice.channelId !== interaction.guild.me.voice.channelId) {return interaction.reply(":negative_squared_cross_mark: Vous devez être connecté à un salon vocal pour que je puisse jouer de la musique !")};
         interaction.reply(":white_check_mark: Je cherche la musique...");
         const query = interaction.options.getString('nom');
-        const queue = player.createQueue(interaction.guild, {metadata: {channel: interaction.channel}});
+        const queue = await player.createQueue(interaction.guild, {metadata: {channel: interaction.channel}});
         try {
             if (!queue.connection) {await queue.connect(channeltoconnect)};
         } catch {

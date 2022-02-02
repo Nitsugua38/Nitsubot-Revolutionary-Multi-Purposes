@@ -1,11 +1,11 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageActionRow, Permissions, MessageEmbed, MessageSelectMenu } = require("discord.js");
+const { MessageActionRow, Permissions, MessageEmbed, MessageSelectMenu, MessageButton } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("msg")
         .setDescription("Envoie un message à un utilisateur en toute sécurité")
-        .addUserOption(option => option.setName('cible').setDescription("L’utilisateur à envoyer le message")),
+        .addUserOption(option => option.setName('cible').setDescription("L’utilisateur à envoyer le message").setRequired(true)),
     async execute(interaction) {
         if (interaction.memberPermissions.has(Permissions.FLAGS.MANAGE_MESSAGES)){
             const usertosend = interaction.options.getUser('cible');
@@ -34,12 +34,9 @@ module.exports = {
                                 collected.first().delete();
                                 interaction.followUp({ content: `${interaction.member} Options d’envoi`, components: [sendrow], ephemeral: true})
                                 .then(() => {
-                                    const filter = i => {
-                                        i.deferUpdate();
-                                        return i.user.id === interaction.user.id;
-                                    };
-                                    interaction.channel.awaitMessageComponent({ filter, componentType: 'SELECT_MENU', time: 60000 })
+                                    interaction.channel.awaitMessageComponent({ componentType: 'SELECT_MENU', time: 60000 })
                                         .then(interaction => {
+                                            
                                             const target = interaction.guild.members.cache.get(usertosend.id);
                                             var embedok = 0;
                                             var embedtosend = 0;
@@ -53,7 +50,8 @@ module.exports = {
                                                 embedtosend = new MessageEmbed().setColor("#0066CC").setTitle(":incoming_envelope: On vous a envoyé un message !").setDescription(`de manière anonyme`).addField("Contenu du message", `${messagetosend}`, true).setTimestamp().setFooter({ text : 'Messenger Bot. Made by Nitsugua38', iconURL: 'https://cdn.discordapp.com/avatars/917404523583135744/64302207180f2ef414df7cf89296e4ef.png'});
                                                 embedok = new MessageEmbed().setColor("006400").setTitle(":question: Votre message a bien été remis en mode Anonyme !").addField("Contenu du message", `${messagetosend}`, true).setTimestamp().setFooter({ text : 'Messenger Bot. Made by Nitsugua38', iconURL: 'https://cdn.discordapp.com/avatars/917404523583135744/64302207180f2ef414df7cf89296e4ef.png'});
                                             };
-                                            interaction.channel.send({embeds: [embedok], ephemeral: true});
+                                            const rowb = new MessageActionRow().addComponents(new MessageButton().setCustomId("deleteme").setLabel("Cacher ce message !").setStyle("DANGER").setEmoji('✖'),);
+                                            interaction.reply({embeds: [embedok], ephemeral: true});
                                             target.send({embeds: [embedtosend]});
                                     }).catch(err => interaction.followUp({content: `:x: Erreur : Vous n’avez rien sélectionné, commande annulée ${err}`, ephemeral: true}));
                                 });

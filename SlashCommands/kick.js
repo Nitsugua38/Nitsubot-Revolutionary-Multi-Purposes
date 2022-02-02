@@ -6,7 +6,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName("kick")
         .setDescription("Expulse quelqu’un en lui envoyant un message")
-        .addUserOption(option => option.setName('cible').setDescription("L’utilisateur à expulser")),
+        .addUserOption(option => option.setName('cible').setDescription("L’utilisateur à expulser").setRequired(true)),
     async execute(interaction) {
         if (interaction.memberPermissions.has(Permissions.FLAGS.KICK_MEMBERS)) {
             var noerroroccured = true;

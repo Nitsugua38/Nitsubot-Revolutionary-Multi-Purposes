@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const Tags = require("../client/Tags.js");
+const { Tags } = require("../index.js");
 const { MessageButton, MessageActionRow } = require("discord.js")
 
 
