@@ -1,16 +1,18 @@
 const fs = require("fs");
+var moment = require("moment");
 const { Client, Intents, Collection, MessageButton, MessageActionRow, MessageEmbed } = require('discord.js');
 const { token } = require("./config.json");
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILD_INVITES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_TYPING, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGE_TYPING] });
-module.exports = client;
 
-const Tags = require("./client/Tags");
+const client = new Client({ intents: [ Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_BANS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS, Intents.FLAGS.GUILD_INTEGRATIONS, Intents.FLAGS.GUILD_WEBHOOKS, Intents.FLAGS.GUILD_INVITES, Intents.FLAGS.GUILD_PRESENCES, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.GUILD_MESSAGE_TYPING, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGE_TYPING, Intents.FLAGS.GUILD_VOICE_STATES] });
 
+
+
+// Player
 var isplaying = false;
 const { Player } = require("discord-player");
 const player = new Player(client);
-module.exports = player;
+
 
 const rowmusique = new MessageActionRow().addComponents(new MessageButton().setCustomId("playermusic").setLabel("Play / Pause").setStyle("PRIMARY").setEmoji("⏯️"), new MessageButton().setCustomId("playerskip").setLabel("Skip").setStyle("SECONDARY").setEmoji("⏭️"), new MessageButton().setCustomId("playerstop").setLabel("Arrêter").setStyle("DANGER").setEmoji("⏹️"), new MessageButton().setCustomId("playersee").setLabel("Voir la file d’attente").setStyle("SECONDARY").setEmoji("🕓"), new MessageButton().setCustomId("playerlyrics").setLabel("Voir les paroles").setStyle("SECONDARY").setEmoji("📜"));
 player.on("trackStart", (queue, track) => {
@@ -23,6 +25,7 @@ player.on("trackEnd", (queue, track) => {
 });
 player.on("error", (queue, track) => {
     isplaying = false;
+    
     queue.metadata.channel.send(":x: Une erreur est survenue, musique arrêtée !");
 });
 player.on("trackAdd", (queue, track) => {
@@ -30,7 +33,7 @@ player.on("trackAdd", (queue, track) => {
 });
 
 
-
+// Player - Lyrics
 const axios = require("axios");
 const getLyrics = (title) => new Promise(async (ful, rej) => {
     const url = new URL("https://some-random-api.ml/lyrics");
@@ -61,12 +64,46 @@ const createResponse = async (title) => {
         });
         return { embeds };
     } catch (error) {
-        return "Pas de sous titres trouvés :(";
+        return "Pas de paroles trouvés :(";
     }
 };
 
 
 
+// Database
+const Sequelize = require("sequelize");
+
+const sequelize = new Sequelize('database', 'user', 'password', {
+    host: 'localhost',
+    dialect: 'sqlite',
+    logging: false,
+    storage: 'db1.sqlite',
+});
+
+const Tags = sequelize.define('tags', {
+    guildid: {
+        type: Sequelize.STRING,
+        unique: true,
+    },
+    tccateg: {
+        type: Sequelize.TEXT,
+    },
+    wheretoreply: {
+        type: Sequelize.TEXT,
+    },
+    wheretocontactstaff: {
+        type: Sequelize.ARRAY(Sequelize.DataTypes.TEXT),
+    },
+});
+module.exports = {
+    client: client,
+    Tags: Tags,
+    player: player
+};
+
+
+
+// Discord
 
 client.commands = new Collection();
 const commandFiles = fs.readdirSync("./SlashCommands").filter(file => file.endsWith(".js"));
@@ -151,9 +188,65 @@ client.on('interactionCreate', async interaction => {
             if (!title) {return interaction.reply(":negative_squared_cross_mark: Pas de musique en cours de lecture !");};
             sendLyrics(title);
         }
+        else if (interaction.customId.startsWith("ticket")) {
+            const roleid = interaction.customId.replace("ticketroleis", "");
+            if (!roleid) return interaction.reply(":x: Impossible de créer un ticket. Le rôle du staff n'existe peut être plus");
+            interaction.guild.channels.create("Nouveau Ticket", {
+                type: "GUILD_TEXT",
+                permissionOverwrites: [{
+                    id: interaction.guild.roles.everyone.id,
+                    deny: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+                },
+                {
+                    id: roleid,
+                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY", "EMBED_LINKS", "CREATE_PUBLIC_THREADS", "CREATE_PRIVATE_THREADS", "ATTACH_FILES", "ADD_REACTIONS"]
+                },
+                {
+                    id: interaction.member.id,
+                    allow: ["VIEW_CHANNEL", "SEND_MESSAGES", "READ_MESSAGE_HISTORY", "CREATE_PUBLIC_THREADS", "CREATE_PRIVATE_THREADS", "ATTACH_FILES", "ADD_REACTIONS"]
+                }],
+            }).then(channel => {
+                interaction.reply({ content: `:white_check_mark: Ticket créé dans ${channel}`, ephemeral: true });
+                const embedstaff = new MessageEmbed().setColor("GREEN").setTitle(":ticket: Votre ticket a bien été créé !").setDescription("Vous serez rapidement recontacté ici par le staff !").setTimestamp().setFooter({ text : 'Messenger Bot. Made by Nitsugua38', iconURL: 'https://cdn.discordapp.com/avatars/917404523583135744/64302207180f2ef414df7cf89296e4ef.png'});
+                const rowbuttons = new MessageActionRow().addComponents(new MessageButton().setCustomId("savetranscript").setLabel("Exporter la transcription").setStyle("SECONDARY").setEmoji("📝"), new MessageButton().setCustomId("closeticket").setLabel("Fermer").setStyle("SECONDARY").setEmoji("🔒"));
+                channel.send({ embeds: [embedstaff], components: [rowbuttons] });
+            });
+        } 
+        else if (interaction.customId.startsWith("closetick")) {
+            const embedsure = new MessageEmbed().setColor("RED").setTitle("Êtes vous sûr de vouloir fermer ce ticket ?").setDescription("Le salon sera supprimé et vous ne pourrez plus exporter la transcription (historique des messages)");
+            const rowbuttons = new MessageActionRow().addComponents(new MessageButton().setCustomId("definitelyclose").setLabel("Supprimer").setStyle("DANGER").setEmoji("⛔"), new MessageButton().setCustomId("cancelclosing").setLabel("Annuler").setStyle("SECONDARY"));
+            interaction.reply({ embeds: [embedsure], components: [rowbuttons] });
+        }
+        else if (interaction.customId.startsWith("cancelclo")) interaction.message.delete();
+
+        else if (interaction.customId.startsWith("definitelyc")) interaction.channel.delete();
+
+        else if (interaction.customId.startsWith("savetra")) {
+            interaction.reply(":white_check_mark: Sauvegarde de l’historique des messages...");
+            interaction.channel.messages.fetch().then(async messages => {
+                let finalArray = [];
+                const putInArray = async (data) => finalArray.push(data);
+                const handleTime = (timestamp) => moment(timestamp).format("DD/MM/YYYY - hh:mm:ss a").replace("pm", "PM").replace("am", "AM"); 
+            
+                for (const message of messages.values()) await putInArray(`${handleTime(message.createdTimestamp)} **par** ${message.author.username} **:** ${message.content}@end@`); 
+                interaction.deleteReply();
+                tosendresult = finalArray.reverse().toString().replace(/@end@,/g, "\n").replace(/@end@/g, "");
+                const noop = () => {};
+                await fs.writeFile("messageover.txt", tosendresult, noop);
+                interaction.channel.send({
+                  files: [{
+                    attachment: "messageover.txt",
+                    name: "messageover.txt"
+                  }],
+                  content: "Historique :",
+                });
+            });
+        }
     }
 });
 
+
+// Problems
 
 process.on('unhandledRejection', error => {
 	console.error('Unhandled promise rejection:', error);
