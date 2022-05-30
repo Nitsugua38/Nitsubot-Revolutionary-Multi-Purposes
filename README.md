@@ -1,47 +1,19 @@
 # RevolutionaryDiscordBot
 A Revolutionary Discord Bot with redesigned features
 
-## Commands :
-
-
-`/msg` - The bot sends a message to a user in the guild. You can define if he sends either your name or only the name of the guild or… nothing ! Like an anonymous message !
 
 
 
-`/tempchannel` - The bot creates a voice channel for you which can be deleted in one click (even if you are just a member without any permissions !). Note : the moderators have to define the category where to create the voice channel using `/config tempchannel`.
-
-
-
-`/play` - A revolutionary way to listen to music in a voice channel with one command and buttons which allow you to add to music queue, pause, skip, see lyrics, see queue and stop when you’re done!
-
-
-
-`/ticket` - Send a ticket panel with customizable options such as title, description, and staff role to access created tickets !
-
-
-
-`/channel <lock/unlock/private/public>` - Quick way to mute everyone or a specific role in a channel or set a channel to private so one will need a spcific role to be able to accesss it !
-
-
-
-`/kick` and `/ban` - Basics. Allow you to send a message to the user at the same time!
-
-
-
-
-Loads of other features will be available soon as this project is in development and all in a more modern, comfortable and revolutionary way than the other bots !
-
-
+Bot in dev so other features to come, everything in a more modern, comfortable and revolutionary way than the other bots !
 
 
 Bot is currently in French but will be available in English soon !
-
-
 
 
 Feel free to invite the bot:
 https://discord.com/oauth2/authorize?client_id=919251061066317896&permissions=8&scope=bot%20applications.commands
 
 
+Discord server : https://discord.gg/ZQVpjMZJqp
 
 Status page : https://nitsubot-rmp.statuspage.io
