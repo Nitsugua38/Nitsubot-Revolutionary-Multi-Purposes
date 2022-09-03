@@ -10,12 +10,12 @@ module.exports = {
         .addUserOption(option => option.setName('membre').setDescription("L’utilisateur à mute").setRequired(true))
         .addIntegerOption(option => option.setName('temps').setDescription("Le temps en MINUTES").setRequired(true))
         .addStringOption(option => option.setName('raison').setDescription("La raison pour laquelle l’utilisateur est mute")),
-    async execute(interaction) {
+    async execute(interaction, ImportedMember) {
         if (interaction.memberPermissions.has(Permissions.FLAGS.MODERATE_MEMBERS)) {
 
-            const usertomute = interaction.options.getMember('membre');
-            const timetomute = interaction.options.getInteger('temps') * 60000;
-            const reason = interaction.options.getString('raison')?.substring(0,3000) || "Aucune raison donnée";
+            const usertomute = interaction.options?.getMember('membre') || interaction.guild.members.cache.get(ImportedMember);
+            const timetomute = interaction.options?.getInteger('temps') * 60000 || 3600000;
+            const reason = interaction.options?.getString('raison')?.substring(0,3000) || "Aucune raison donnée";
 
             const embedinvalid = new MessageEmbed().setColor("RED").setTitle("Valeur incorrecte").setDescription("Veuillez rentrer une valeur comprise entre 1 et 10080 (1 semaine)");
             if ((timetomute / 60000) > 10080 || (timetomute / 60000) < 1) return interaction.reply({embeds: [embedinvalid]});

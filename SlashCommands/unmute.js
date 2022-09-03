@@ -8,10 +8,10 @@ module.exports = {
         .setName("unmute")
         .setDescription("Réautorise quelqu’un à parler")
         .addUserOption(option => option.setName('membre').setDescription("L’utilisateur à unmute").setRequired(true)),
-        async execute(interaction) {
+        async execute(interaction, ImportedMember) {
             if (interaction.memberPermissions.has(Permissions.FLAGS.MODERATE_MEMBERS)) {
     
-                const usertomute = interaction.options.getMember('membre');
+                const usertomute = interaction.options?.getMember('membre') || interaction.guild.members.cache.get(ImportedMember);
     
                 if ((interaction.member.roles.highest.position > usertomute.roles.highest.position || interaction.member.id === interaction.guild.ownerId) && client.guilds.cache.get(interaction.guild.id).me.roles.highest.position > usertomute.roles.highest.position) {
                     

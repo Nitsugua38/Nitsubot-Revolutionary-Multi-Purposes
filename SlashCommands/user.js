@@ -1,13 +1,13 @@
 const { SlashCommandBuilder } = require("@discordjs/builders");
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, MessageActionRow, MessageButton, Permissions } = require("discord.js");
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName("user")
         .setDescription("Affiche les informations sur l’utilisateur")
-        .addUserOption(option => option.setName('cible').setDescription("L’utilisateur à afficher les options")),
+        .addUserOption(option => option.setName('membre').setDescription("L’utilisateur sur qui afficher les informations")),
     async execute(interaction) {
-        var member = interaction.options.getMember("cible");
+        var member = interaction.options.getMember("membre");
         if (!member) member = interaction.member;
         var status = member.presence?.status;
         var clientStatus;
@@ -15,6 +15,14 @@ module.exports = {
         var timeout;
         var nickname;
         var customstatus;
+
+        var isAuthor = "*Membre*";
+        if (member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) isAuthor = "*Modérateur*";
+        if (member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) isAuthor = "*Admin*";
+        if (member.id === "595655955572719646") isAuthor = "*Fondateur et développeur du bot*";
+
+
+
         if (status == undefined || status == "offline") {
             status = "Hors-ligne";
             clientStatus = "Hors-ligne";
@@ -45,13 +53,14 @@ module.exports = {
         var un = [...member.roles.cache.keys()];
         var rolelist = "";
         for (let i = 0; i < un.length-1; i++) {
-            rolelist += `<@&${un[i]}> , `;
+            rolelist += `<@&${un[i]}> `;
         }
         rolelist += ".";
 
         const embeduser = new MessageEmbed()
             .setColor(member.displayHexColor)
             .setTitle(`Informations sur ${member.user.username}`)
+            .setDescription(isAuthor)
             .setThumbnail(member.user.displayAvatarURL({dynamic: true}))
             .addFields(
                 { name: ":id: Identifiant", value: `${member.user.id}`, inline: true },
@@ -59,7 +68,7 @@ module.exports = {
                 { name: ":pencil2: Nickname", value: `${nickname}`, inline: true }
             )
             .addFields(
-                { name: "<:NitsuDiscordLogo:941034341381861436> A rejoint Discord le", value: `<t:${Math.floor(member.user.createdTimestamp / 1000 )}>`, inline: true },
+                { name: "<:NitsuDiscordLogo:988185694587478058> A créé son compte le", value: `<t:${Math.floor(member.user.createdTimestamp / 1000 )}>`, inline: true },
                 { name: "<:NitsuJoinArrow:941036889262129242> A rejoint le serveur le", value: `<t:${Math.floor(member.joinedTimestamp / 1000)}>`, inline: true },
                 { name: ":credit_card: Abonnement", value: `${nitro}`, inline: true }
             )
@@ -72,7 +81,16 @@ module.exports = {
                 { name: ":passport_control: Rôles", value: `${rolelist}`, inline: true },
                 { name: ":exclamation: Sanction", value: `${timeout}`, inline: true }
             );
-        interaction.reply({embeds: [embeduser]});
+
+        const row = new MessageActionRow().addComponents(
+            new MessageButton().setLabel("Envoyer un message").setEmoji("✉️").setStyle("SUCCESS").setCustomId(`bmsg${member.id}`),
+            new MessageButton().setLabel("Mute 1h / Unmute").setEmoji("🔇").setStyle("PRIMARY").setCustomId(`bmut${member.id}`),
+            new MessageButton().setLabel("Expulser").setEmoji("❌").setStyle("SECONDARY").setCustomId(`bkic${member.id}`),
+            new MessageButton().setLabel("Bannir").setEmoji("⛔").setStyle("DANGER").setCustomId(`bban${member.id}`)
+        );
+        
+        interaction.reply({embeds: [embeduser], components: [row] });
+        
     },
 };
 
