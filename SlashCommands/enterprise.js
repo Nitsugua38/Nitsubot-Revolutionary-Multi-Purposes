@@ -55,8 +55,13 @@ async execute(interaction) {
                         var ch1 = itemInfos[6] === "skip" ? "" : `– ${itemInfos[6]} ${itemInfos[7]}`
                         var ch2 = itemInfos[8] === "skip" ? "" : `– ${itemInfos[8]} ${itemInfos[9]}`
 
-                        if (tag.enterprises?.includes(",")) var ch3 = tag.enterprises?.includes(`${itemInfos[0]},`) ? `– Acquise <:NitsuGreenTickRound:977520117216862239>` : ""
-                        else var ch3 = tag.enterprises === itemInfos[0] ? `– Acquise <:NitsuGreenTickRound:977520117216862239>` : ""
+                        var ch3 = "";
+                        
+                        if (tag.enterprises && tag.enterprises !== "") {
+                            if (tag.enterprises.concat(",").includes(`${itemInfos[0]},`)) {
+                                ch3 = `– Acquise <:NitsuGreenTickRound:977520117216862239>`
+                            }
+                        }
 
                         
     
@@ -93,10 +98,11 @@ async execute(interaction) {
 
                     const itemsArray = tag2.enterprises?.split(",");
 
-                    if (itemsArray.length === 0) return interaction.reply({embeds: [embednotfound]});
+                    const enterprise = tag2.enterprises?.split(",")?.find(item => item.startsWith(`${enterpriseName}/`));
+
+                    if (itemsArray.length === 0 || !enterprise) return interaction.reply({embeds: [embednotfound]});
 
 
-                    const enterprise = tag2.enterprises.split(",").find(item => item.startsWith(`${enterpriseName}/`));
                     
 
                     const enterpriseInfos = enterprise.toString().split("/");
@@ -206,12 +212,14 @@ async execute(interaction) {
                     if (!enterpriseName) return interaction.reply({embeds: [embednotfound]})
 
                     const itemsArray = tag2.enterprises?.split(",");
+                    const enterprise = tag2.enterprises?.split(",")?.find(item => item.startsWith(`${enterpriseName}/`));
 
-                    if (itemsArray.length === 0) return interaction.reply({embeds: [embednotfound]});
+
+                    if (itemsArray.length === 0 || !enterprise) return interaction.reply({embeds: [embednotfound]});
 
 
-                    const enterprise = tag2.enterprises.split(",").find(item => item.startsWith(`${enterpriseName}/`));
                     const enterpriseInfos = enterprise.toString().split("/");
+                    
 
                     
                     if (!tag.enterprises) return interaction.reply({embeds: [embedNP]});

@@ -51,12 +51,7 @@ module.exports = {
             var memberNotValid = [];
 
             for (let i = 0; i < rolesSalariesObj.length; i++) {
-                if (tag.enterprises?.includes(",")) {
-                    if (tag.enterprises.includes(`${rolesSalariesObj[i].name},`)) {
-                        memberValidRoles.push(rolesSalariesObj[i]);
-                    }
-                }
-                else if (tag.enterprises ===rolesSalariesObj[i].name) {
+                if (tag.enterprises.concat(",").includes(`${rolesSalariesObj[i].name},`)) {
                     memberValidRoles.push(rolesSalariesObj[i]);
                 }
             }
@@ -127,26 +122,31 @@ module.exports = {
             if (memberValidRolesFinal.toString() !== "") {
                 memberValidRolesFinal.forEach(role => {
 
-                    if (tag2.materials.split(",").find(material => material.startsWith(`${role.roleSuffix}/`)).includes("oui")) return
-                    
-                    description += `${role.name} : ${role.roleAmount} ${role.roleSuffix} \n`;
-                    
-                
-                    let material = role.roleSuffix
-
-                    if (materialsList.find(item => item.startsWith(`${material}/`))) {
-
-                        var materialArr = materialsList.find(item => item.startsWith(`${material}/`)).split("/");
-                        materialArr[1] = parseInt(materialArr[1]) + role.roleAmount;
-
-                        var OthermaterialArr = materialsList.filter(item => !item.startsWith(`${material}/`)).toString();
-
-                        if (OthermaterialArr) materialsList = (OthermaterialArr + "," + materialArr.toString().replace(/,/g, "/")).split(",");
-                        else materialsList =  materialArr.toString().replace(/,/g, "/").split(",");
-                    
+                    if (tag2.materials.split(",").find(material => material.startsWith(`${role.roleSuffix}/`)).includes("oui")) {
+                        description += `${role.name} : <:NitsuShortage:1016273758425714798> En pénurie\n`;
                     }
+
                     else {
-                        materialsList.push(`${material}/${role.roleAmount}`);
+                    
+                        description += `${role.name} : ${role.roleAmount} ${role.roleSuffix}\n`;
+                        
+                    
+                        let material = role.roleSuffix
+
+                        if (materialsList.find(item => item.startsWith(`${material}/`))) {
+
+                            var materialArr = materialsList.find(item => item.startsWith(`${material}/`)).split("/");
+                            materialArr[1] = parseInt(materialArr[1]) + role.roleAmount;
+
+                            var OthermaterialArr = materialsList.filter(item => !item.startsWith(`${material}/`)).toString();
+
+                            if (OthermaterialArr) materialsList = (OthermaterialArr + "," + materialArr.toString().replace(/,/g, "/")).split(",");
+                            else materialsList =  materialArr.toString().replace(/,/g, "/").split(",");
+                        
+                        }
+                        else {
+                            materialsList.push(`${material}/${role.roleAmount}`);
+                        }
                     }
                      
                 });
