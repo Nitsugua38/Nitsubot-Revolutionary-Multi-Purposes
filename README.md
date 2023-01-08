@@ -3,6 +3,12 @@ A Revolutionary Discord Bot with redesigned features
 
 
 
+Currently used in 102 + servers
+
+Full description: https://top.gg/fr/bot/919251061066317896
+
+
+
 
 Bot in dev so other features to come, everything in a more modern, comfortable and revolutionary way than the other bots !
 
