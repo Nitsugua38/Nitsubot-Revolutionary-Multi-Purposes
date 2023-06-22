@@ -1,9 +1,9 @@
 # RevolutionaryDiscordBot
 A Revolutionary Discord Bot with redesigned features
 
+Code not up to date !!
 
-
-Currently used in 102 + servers
+Currently used in 175 + servers
 
 Full description: https://top.gg/fr/bot/919251061066317896
 
